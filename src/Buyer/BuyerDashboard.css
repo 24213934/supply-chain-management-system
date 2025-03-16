@@ -1,0 +1,41 @@
+.container .dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  z-index: 9999;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 5px;
+  padding: 0;
+}
+
+.container .dropdown-item {
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f1f1;
+  transition: background-color 0.3s ease, padding-left 0.3s ease;
+}
+
+.container .dropdown-item:hover {
+  background-color: #f8f8f8;
+  padding-left: 10px;
+}
+
+input.form-control {
+  position: relative;
+}
+
+.container {
+  position: relative;
+}
+
+input.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
