@@ -77,7 +77,7 @@ Repeat the above step for all other microservices.
 
 ## Frontend Setup
 
-### Navigate to the Frontend Directory
+### Clone the Frontend Repository
 
 ```sh
 git clone https://github.com/24213934/supply-chain-management-system.git
