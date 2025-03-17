@@ -32,7 +32,7 @@ The project consists of multiple microservices along with this React front-end p
 ### Clone the microservices repositories
 
 ```sh
-git clone https://github.com/24213934/user-authentication-access-control-service.git'
+git clone https://github.com/24213934/user-authentication-access-control-service.git
 git clone https://github.com/24213934/inventory-management-service.git
 git clone https://github.com/24213934/order-management-service.git
 git clone https://github.com/24213934/supplier-management-service.git
