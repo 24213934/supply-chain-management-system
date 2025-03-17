@@ -105,6 +105,7 @@ export const SupplierDashboard = () => {
       }
 
       await fetchOrders();
+      await fetchInsights();
     } catch (error) {
       console.error("Error updating order status:", error.message);
 
@@ -138,6 +139,7 @@ export const SupplierDashboard = () => {
 
       if (!response.ok) throw new Error("Failed to add item.");
       await fetchInventory();
+      await fetchInsights();
       setNewItem(null);
     } catch (error) {
       console.error("Error adding item:", error.message);
@@ -157,6 +159,7 @@ export const SupplierDashboard = () => {
 
       setInventory(inventory.filter((item) => item.id !== itemToDelete));
       setIsModalVisible(false);
+      await fetchInsights();
     } catch (error) {
       console.error("Error deleting item:", error.message);
     }
@@ -238,8 +241,7 @@ export const SupplierDashboard = () => {
               />
             </div>
             <br />
-            {/* Show a message if inventory is empty */}
-            {inventory.length === 0 ? (
+            {inventory.length === 0 && !newItem ? (
               <div className="alert alert-info" role="alert">
                 No items in the inventory.
               </div>

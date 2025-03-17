@@ -1,0 +1,16 @@
+.modal-dialog {
+  max-width: 600px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-height: 80vh;
+  overflow-y: auto;
+}

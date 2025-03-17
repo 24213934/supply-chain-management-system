@@ -18,6 +18,7 @@ const BuyerDashboard = () => {
     quantity: 1,
   });
   const [error, setError] = useState("");
+  const [updateError, setUpdateError] = useState("");
 
   useEffect(() => {
     fetchOrders();
@@ -90,29 +91,52 @@ const BuyerDashboard = () => {
       setError("");
     } catch (err) {
       console.error("Error creating order:", err.message);
-      setError("Error placing order. Try again.");
+      setError(
+        "Error placing order. Try again with different quantity or item."
+      );
     }
   };
 
   const handleEditOrder = (order) => {
-    setEditingOrderId(order.id);
+    setEditingOrderId(order.orderId);
     setEditableOrder({ ...order });
   };
 
-  const handleSaveOrder = (id) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === id
-          ? {
-              ...editableOrder,
-              item: editableOrder.item,
-              quantity: editableOrder.quantity,
-            }
-          : order
-      )
-    );
-    setEditingOrderId(null);
-    setEditableOrder(null);
+  const handleSaveOrder = async (orderId) => {
+    setUpdateError("");
+    try {
+      const response = await fetch(
+        `${API_ORDERS_BASE_URL}/update-details/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemId: editableOrder.itemId,
+            itemName: editableOrder.itemName,
+            quantity: editableOrder.quantity,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update order details.");
+      }
+
+      const updatedOrder = await response.json();
+      setOrders(
+        orders.map((order) =>
+          order.orderId === orderId ? updatedOrder : order
+        )
+      );
+
+      setEditingOrderId(null);
+      setEditableOrder(null);
+    } catch (err) {
+      console.error("Error updating order:", err.message);
+      setUpdateError(err.message || "Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -172,7 +196,7 @@ const BuyerDashboard = () => {
           </label>
           <input
             type="number"
-            className="form-control"
+            className={`form-control ${error ? "is-invalid" : ""}`}
             id="newQuantity"
             value={newOrder.quantity}
             onChange={(e) =>
@@ -182,6 +206,7 @@ const BuyerDashboard = () => {
               })
             }
           />
+          {error && <div className="invalid-feedback">{error}</div>}
         </div>
         <button className="btn btn-primary" onClick={handleCreateOrder}>
           Create Order
@@ -219,17 +244,37 @@ const BuyerDashboard = () => {
                     <td>
                       {editingOrderId === order.orderId &&
                       order.status === "PENDING" ? (
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editableOrder.item}
-                          onChange={(e) =>
-                            setEditableOrder({
-                              ...editableOrder,
-                              item: e.target.value,
-                            })
-                          }
-                        />
+                        <>
+                          <select
+                            className={`form-select ${
+                              updateError ? "is-invalid" : ""
+                            }`}
+                            value={editableOrder.itemId}
+                            onChange={(e) => {
+                              const selectedItem = items.find(
+                                (item) => item.itemId === e.target.value
+                              );
+                              if (selectedItem) {
+                                setEditableOrder({
+                                  ...editableOrder,
+                                  itemId: selectedItem.itemId,
+                                  itemName: selectedItem.itemName,
+                                });
+                              }
+                            }}
+                          >
+                            {items.map(({ itemId, itemName }) => (
+                              <option key={itemId} value={itemId}>
+                                {itemName}
+                              </option>
+                            ))}
+                          </select>
+                          {updateError && (
+                            <div className="invalid-feedback">
+                              {updateError}
+                            </div>
+                          )}
+                        </>
                       ) : (
                         order.itemName
                       )}
@@ -237,17 +282,26 @@ const BuyerDashboard = () => {
                     <td>
                       {editingOrderId === order.orderId &&
                       order.status === "PENDING" ? (
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={editableOrder.quantity}
-                          onChange={(e) =>
-                            setEditableOrder({
-                              ...editableOrder,
-                              quantity: parseInt(e.target.value, 10) || 1,
-                            })
-                          }
-                        />
+                        <>
+                          <input
+                            type="number"
+                            className={`form-control ${
+                              updateError ? "is-invalid" : ""
+                            }`}
+                            value={editableOrder.quantity}
+                            onChange={(e) =>
+                              setEditableOrder({
+                                ...editableOrder,
+                                quantity: parseInt(e.target.value, 10) || 1,
+                              })
+                            }
+                          />
+                          {updateError && (
+                            <div className="invalid-feedback">
+                              {updateError}
+                            </div>
+                          )}
+                        </>
                       ) : (
                         order.quantity
                       )}
